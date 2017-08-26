@@ -31,18 +31,12 @@ public class Args
         char elementId = element.charAt(0);
         String elementTail = element.substring(1);
         validateSchemaElementId(elementId);
-        if (elementTail.length() == 0)
-            marshallers.put(elementId, new BooleanArgumentMarshaller());
-        else if (elementTail.equals("*"))
-            marshallers.put(elementId, new StringArgumentMarshaller());
-        else if (elementTail.equals("#"))
-            marshallers.put(elementId, new IntegerArgumentMarshaller());
-        else if (elementTail.equals("##"))
-            marshallers.put(elementId, new DoubleArgumentMarshaller());
-        else if (elementTail.equals("[*]"))
-            marshallers.put(elementId, new StringArrayArgumentMarshaller());
-        else
+        ArgumentMarshaller marshaller = MarshallerFactory.GetMarshaller(elementTail);
+        if(marshaller == null)
+        {
             throw new ArgsException(INVALID_ARGUMENT_FORMAT, elementId, elementTail);
+        }
+        marshallers.put(elementId, marshaller);
     }
 
     private void validateSchemaElementId(char elementId) throws ArgsException
