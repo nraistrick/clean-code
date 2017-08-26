@@ -1,0 +1,9 @@
+# Compiled Java code
+out
+
+# User-specific IntelliJ IDE files
+**/.idea/workspace.xml
+**/.idea/tasks.xml
+
+# Mac OS X directory-specific information
+.DS_Store
