@@ -1,4 +1,4 @@
-package args.marshalers;
+package args.marshallers;
 
 import args.ArgsException;
 
@@ -6,7 +6,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import static args.ArgsException.ErrorCode.MISSING_STRING;
 
-public class StringArgumentMarshaler implements ArgumentMarshaler
+public class StringArgumentMarshaller implements ArgumentMarshaller
 {
     private String stringValue = "";
 
@@ -22,10 +22,10 @@ public class StringArgumentMarshaler implements ArgumentMarshaler
         }
     }
 
-    public static String getValue(ArgumentMarshaler am)
+    public static String getValue(ArgumentMarshaller am)
     {
-        if (am != null && am instanceof StringArgumentMarshaler)
-            return ((StringArgumentMarshaler) am).stringValue;
+        if (am != null && am instanceof StringArgumentMarshaller)
+            return ((StringArgumentMarshaller) am).stringValue;
         else
             return "";
     }

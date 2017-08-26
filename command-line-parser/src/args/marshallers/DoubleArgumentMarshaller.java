@@ -1,4 +1,4 @@
-package args.marshalers;
+package args.marshallers;
 
 import args.ArgsException;
 
@@ -8,7 +8,7 @@ import java.util.NoSuchElementException;
 import static args.ArgsException.ErrorCode.INVALID_DOUBLE;
 import static args.ArgsException.ErrorCode.MISSING_DOUBLE;
 
-public class DoubleArgumentMarshaler implements ArgumentMarshaler
+public class DoubleArgumentMarshaller implements ArgumentMarshaller
 {
     private double doubleValue = 0;
 
@@ -30,10 +30,10 @@ public class DoubleArgumentMarshaler implements ArgumentMarshaler
         }
     }
 
-    public static double getValue(ArgumentMarshaler am)
+    public static double getValue(ArgumentMarshaller am)
     {
-        if (am != null && am instanceof DoubleArgumentMarshaler)
-            return ((DoubleArgumentMarshaler) am).doubleValue;
+        if (am != null && am instanceof DoubleArgumentMarshaller)
+            return ((DoubleArgumentMarshaller) am).doubleValue;
         else
             return 0;
     }

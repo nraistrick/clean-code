@@ -1,4 +1,4 @@
-package args.marshalers;
+package args.marshallers;
 
 import args.ArgsException;
 
@@ -6,7 +6,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import static args.ArgsException.ErrorCode.*;
 
-public class IntegerArgumentMarshaler implements ArgumentMarshaler
+public class IntegerArgumentMarshaller implements ArgumentMarshaller
 {
     private int intValue = 0;
 
@@ -28,10 +28,10 @@ public class IntegerArgumentMarshaler implements ArgumentMarshaler
         }
     }
 
-    public static int getValue(ArgumentMarshaler am)
+    public static int getValue(ArgumentMarshaller am)
     {
-        if (am != null && am instanceof IntegerArgumentMarshaler)
-            return ((IntegerArgumentMarshaler) am).intValue;
+        if (am != null && am instanceof IntegerArgumentMarshaller)
+            return ((IntegerArgumentMarshaller) am).intValue;
         else
             return 0;
     }
