@@ -1,6 +1,8 @@
 package args;
 
 import args.marshallers.*;
+import args.schema.SchemaElement;
+import args.schema.ArgumentSchema;
 
 import static args.ArgsException.ErrorCode.*;
 import java.util.*;
@@ -15,34 +17,21 @@ public class Args
     {
         marshallers = new HashMap<>();
         argsFound = new HashSet<>();
-        parseSchema(schema);
+        setupArgumentMarshallers(new ArgumentSchema(schema));
         parseArgumentStrings(Arrays.asList(args));
     }
 
-    private void parseSchema(String schema) throws ArgsException
+    private void setupArgumentMarshallers(ArgumentSchema schema) throws ArgsException
     {
-        for (String element : schema.split(","))
-            if (element.length() > 0)
-                parseSchemaElement(element.trim());
-    }
-
-    private void parseSchemaElement(String element) throws ArgsException
-    {
-        char elementId = element.charAt(0);
-        String elementTail = element.substring(1);
-        validateSchemaElementId(elementId);
-        ArgumentMarshaller marshaller = MarshallerFactory.GetMarshaller(elementTail);
-        if(marshaller == null)
+        for (SchemaElement e : schema.getElements())
         {
-            throw new ArgsException(INVALID_ARGUMENT_FORMAT, elementId, elementTail);
+            ArgumentMarshaller marshaller = MarshallerFactory.GetMarshaller(e.getElementTail());
+            if(marshaller == null)
+            {
+                throw new ArgsException(INVALID_ARGUMENT_FORMAT, e.getElementId(), e.getElementTail());
+            }
+            marshallers.put(e.getElementId(), marshaller);
         }
-        marshallers.put(elementId, marshaller);
-    }
-
-    private void validateSchemaElementId(char elementId) throws ArgsException
-    {
-        if (!Character.isLetter(elementId))
-            throw new ArgsException(INVALID_ARGUMENT_NAME, elementId, null);
     }
 
     private void parseArgumentStrings(List<String> argsList) throws ArgsException
@@ -75,18 +64,17 @@ public class Args
         {
             throw new ArgsException(UNEXPECTED_ARGUMENT, argChar, null);
         }
-        else
+
+        argsFound.add(argChar);
+        
+        try
         {
-            argsFound.add(argChar);
-            try
-            {
-                m.set(currentArgument);
-            }
-            catch (ArgsException e)
-            {
-                e.setErrorArgumentId(argChar);
-                throw e;
-            }
+            m.set(currentArgument);
+        }
+        catch (ArgsException e)
+        {
+            e.setErrorArgumentId(argChar);
+            throw e;
         }
     }
 
