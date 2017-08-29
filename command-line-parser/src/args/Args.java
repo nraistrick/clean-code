@@ -11,8 +11,8 @@ public class Args
 
     public Args(String schema, String[] args) throws ArgsException
     {
-        marshalers = new HashMap<Character, ArgumentMarshaler>();
-        argsFound = new HashSet<Character>();
+        marshalers = new HashMap<>();
+        argsFound = new HashSet<>();
         parseSchema(schema);
         parseArgumentStrings(Arrays.asList(args));
     }
