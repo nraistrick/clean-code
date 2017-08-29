@@ -1,30 +1,22 @@
 package args.marshallers;
 
-import args.ArgsException;
+import args.exceptions.ArgsException;
 
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-import static args.ArgsException.ErrorCode.*;
+import static args.exceptions.ArgsException.ErrorCode.*;
 
 public class IntegerArgumentMarshaller implements ArgumentMarshaller
 {
     private int intValue = 0;
 
-    public void set(Iterator<String> currentArgument) throws ArgsException
+    public void set(String argument) throws ArgsException
     {
-        String parameter = null;
         try
         {
-            parameter = currentArgument.next();
-            intValue = Integer.parseInt(parameter);
-        }
-        catch (NoSuchElementException e)
-        {
-            throw new ArgsException(MISSING_INTEGER);
+            intValue = Integer.parseInt(argument);
         }
         catch (NumberFormatException e)
         {
-            throw new ArgsException(INVALID_INTEGER, parameter);
+            throw new ArgsException(INVALID_INTEGER, argument);
         }
     }
 

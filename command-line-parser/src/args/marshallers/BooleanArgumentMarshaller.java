@@ -1,14 +1,10 @@
 package args.marshallers;
 
-import args.ArgsException;
-
-import java.util.Iterator;
-
 public class BooleanArgumentMarshaller implements ArgumentMarshaller
 {
     private boolean booleanValue = false;
 
-    public void set(Iterator<String> currentArgument) throws ArgsException
+    public void set(String argument)
     {
         booleanValue = true;
     }

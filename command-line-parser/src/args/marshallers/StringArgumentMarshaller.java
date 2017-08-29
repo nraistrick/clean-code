@@ -1,25 +1,12 @@
 package args.marshallers;
 
-import args.ArgsException;
-
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-import static args.ArgsException.ErrorCode.MISSING_STRING;
-
 public class StringArgumentMarshaller implements ArgumentMarshaller
 {
     private String stringValue = "";
 
-    public void set(Iterator<String> currentArgument) throws ArgsException
+    public void set(String argument)
     {
-        try
-        {
-            stringValue = currentArgument.next();
-        }
-        catch (NoSuchElementException e)
-        {
-            throw new ArgsException(MISSING_STRING);
-        }
+        stringValue = argument;
     }
 
     public static String getValue(ArgumentMarshaller am)

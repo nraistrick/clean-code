@@ -1,7 +1,7 @@
 package args.schema;
 
-import args.ArgsException;
-import static args.ArgsException.ErrorCode.INVALID_ARGUMENT_NAME;
+import args.exceptions.ArgsException;
+import static args.exceptions.ArgsException.ErrorCode.INVALID_ARGUMENT_NAME;
 
 public class SchemaElement
 {

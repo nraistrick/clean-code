@@ -1,10 +1,12 @@
 package args;
 
+import args.exceptions.ArgsException;
+import args.exceptions.MarshallerExceptionMapper;
 import args.marshallers.*;
 import args.schema.SchemaElement;
 import args.schema.ArgumentSchema;
-
-import static args.ArgsException.ErrorCode.*;
+import args.exceptions.ArgsException.ErrorCode;
+import static args.exceptions.ArgsException.ErrorCode.*;
 import java.util.*;
 
 public class Args
@@ -66,10 +68,24 @@ public class Args
         }
 
         argsFound.add(argChar);
-        
+
+        String argumentValue = null;
+        if (!(m instanceof BooleanArgumentMarshaller))
+        {
+            try
+            {
+                argumentValue = currentArgument.next();
+            }
+            catch (NoSuchElementException e)
+            {
+                ErrorCode code = MarshallerExceptionMapper.getErrorCode(m);
+                throw new ArgsException(code, argChar, null);
+            }
+        }
+
         try
         {
-            m.set(currentArgument);
+            m.set(argumentValue);
         }
         catch (ArgsException e)
         {

@@ -1,6 +1,6 @@
 package args.schema;
 
-import args.ArgsException;
+import args.exceptions.ArgsException;
 
 import java.util.ArrayList;
 import java.util.List;

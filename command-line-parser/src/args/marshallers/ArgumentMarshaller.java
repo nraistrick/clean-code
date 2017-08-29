@@ -1,10 +1,8 @@
 package args.marshallers;
 
-import args.ArgsException;
-
-import java.util.Iterator;
+import args.exceptions.ArgsException;
 
 public interface ArgumentMarshaller
 {
-    void set(Iterator<String> currentArgument) throws ArgsException;
+    void set(String argument) throws ArgsException;
 }

@@ -1,5 +1,7 @@
 package args;
 
+import args.exceptions.ArgsException;
+
 public class Main
 {
     public static void main(String[] args)

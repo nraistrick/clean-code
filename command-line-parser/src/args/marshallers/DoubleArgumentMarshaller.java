@@ -1,32 +1,22 @@
 package args.marshallers;
 
-import args.ArgsException;
+import args.exceptions.ArgsException;
 
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-
-import static args.ArgsException.ErrorCode.INVALID_DOUBLE;
-import static args.ArgsException.ErrorCode.MISSING_DOUBLE;
+import static args.exceptions.ArgsException.ErrorCode.INVALID_DOUBLE;
 
 public class DoubleArgumentMarshaller implements ArgumentMarshaller
 {
     private double doubleValue = 0;
 
-    public void set(Iterator<String> currentArgument) throws ArgsException
+    public void set(String argument) throws ArgsException
     {
-        String parameter = null;
         try
         {
-            parameter = currentArgument.next();
-            doubleValue = Double.parseDouble(parameter);
-        }
-        catch (NoSuchElementException e)
-        {
-            throw new ArgsException(MISSING_DOUBLE);
+            doubleValue = Double.parseDouble(argument);
         }
         catch (NumberFormatException e)
         {
-            throw new ArgsException(INVALID_DOUBLE, parameter);
+            throw new ArgsException(INVALID_DOUBLE, argument);
         }
     }
 

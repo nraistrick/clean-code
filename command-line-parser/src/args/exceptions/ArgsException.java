@@ -1,6 +1,6 @@
-package args;
+package args.exceptions;
 
-import static args.ArgsException.ErrorCode.*;
+import static args.exceptions.ArgsException.ErrorCode.*;
 
 public class ArgsException extends Exception
 {

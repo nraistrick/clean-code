@@ -1,5 +1,5 @@
 import args.Args;
-import args.ArgsException;
+import args.exceptions.ArgsException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
