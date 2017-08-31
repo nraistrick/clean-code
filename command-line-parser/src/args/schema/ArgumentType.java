@@ -6,26 +6,39 @@ import java.util.Map;
 
 public enum ArgumentType
 {
-    BOOLEAN      (""),
-    STRING       ("*"),
-    INTEGER      ("#"),
-    DOUBLE       ("##"),
-    STRING_ARRAY ("[*]");
+    BOOLEAN      (""         ),
+    STRING       ("*",   true),
+    INTEGER      ("#",   true),
+    DOUBLE       ("##",  true),
+    STRING_ARRAY ("[*]", true);
 
     private final String schemaFormat;
+    private final boolean requiresValue;
     private static final Map<String, ArgumentType> lookup;
 
     ArgumentType(String schemaFormat)
+    {
+        this.schemaFormat = schemaFormat;
+        this.requiresValue = false;
+    }
+
+    ArgumentType(String schemaFormat, boolean requireValue)
     {
         if (schemaFormat == null)
             throw new IllegalArgumentException("Schema format must not be null");
 
         this.schemaFormat = schemaFormat;
+        this.requiresValue = requireValue;
     }
 
     public String getSchemaFormat()
     {
         return this.schemaFormat;
+    }
+
+    public boolean requiresValue()
+    {
+        return this.requiresValue;
     }
 
     static

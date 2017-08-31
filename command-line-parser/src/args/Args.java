@@ -1,107 +1,65 @@
 package args;
 
+import args.arguments.UserArguments;
 import args.exceptions.ArgsException;
-import args.exceptions.MarshallerExceptionMapper;
 import args.marshallers.*;
 import args.schema.SchemaElement;
 import args.schema.ArgumentSchema;
-import args.exceptions.ArgsException.ErrorCode;
+
 import static args.exceptions.ArgsException.ErrorCode.*;
 import java.util.*;
 
 public class Args
 {
     private Map<Character, ArgumentMarshaller> marshallers;
-    private Set<Character> argsFound;
-    private ListIterator<String> currentArgument;
 
     public Args(String schema, String[] args) throws ArgsException
     {
-        marshallers = new HashMap<>();
-        argsFound = new HashSet<>();
-        setupArgumentMarshallers(new ArgumentSchema(schema));
-        parseArgumentStrings(Arrays.asList(args));
+        ArgumentSchema parsedSchema = new ArgumentSchema(schema);
+        UserArguments userArguments = new UserArguments(args, parsedSchema);
+
+        marshallers = setupArgumentMarshallers(parsedSchema);
+        marshalArguments(userArguments, marshallers);
     }
 
-    private void setupArgumentMarshallers(ArgumentSchema schema) throws ArgsException
+    private Map<Character, ArgumentMarshaller> setupArgumentMarshallers(ArgumentSchema schema) throws ArgsException
     {
+        Map<Character, ArgumentMarshaller> marshallers = new HashMap<>();
         for (SchemaElement e : schema.getElements())
         {
             ArgumentMarshaller marshaller = MarshallerFactory.GetMarshaller(e.getElementType());
             if(marshaller == null)
             {
-                throw new ArgsException(INVALID_ARGUMENT_FORMAT, e.getElementId(), e.getElementType().toString());
+                throw new ArgsException(INVALID_ARGUMENT_FORMAT,
+                                        e.getElementId(),
+                                        e.getElementType().toString());
             }
             marshallers.put(e.getElementId(), marshaller);
         }
+
+        return marshallers;
     }
 
-    private void parseArgumentStrings(List<String> argsList) throws ArgsException
+    private void marshalArguments(UserArguments userArguments,
+                                  Map<Character, ArgumentMarshaller> marshallers) throws ArgsException
     {
-        for (currentArgument = argsList.listIterator(); currentArgument.hasNext(); )
+        for (Object mappedArgumentValues : userArguments.getMappedArguments().entrySet())
         {
-            String argString = currentArgument.next();
-            if (argString.startsWith("-"))
-            {
-                parseArgumentCharacters(argString.substring(1));
-            }
-            else
-            {
-                currentArgument.previous();
-                break;
-            }
-        }
-    }
+            Map.Entry argumentValuePair = (Map.Entry) mappedArgumentValues;
+            Character argumentFlag = (Character) argumentValuePair.getKey();
+            String argumentValue = (String) argumentValuePair.getValue();
 
-    private void parseArgumentCharacters(String argChars) throws ArgsException
-    {
-        for (int i = 0; i < argChars.length(); i++)
-            parseArgumentCharacter(argChars.charAt(i));
-    }
-
-    private void parseArgumentCharacter(char argChar) throws ArgsException
-    {
-        ArgumentMarshaller m = marshallers.get(argChar);
-        if (m == null)
-        {
-            throw new ArgsException(UNEXPECTED_ARGUMENT, argChar, null);
-        }
-
-        argsFound.add(argChar);
-
-        String argumentValue = null;
-        if (!(m instanceof BooleanArgumentMarshaller))
-        {
+            ArgumentMarshaller marshaller = marshallers.get(argumentFlag);
             try
             {
-                argumentValue = currentArgument.next();
+                marshaller.set(argumentValue);
             }
-            catch (NoSuchElementException e)
+            catch (ArgsException e)
             {
-                ErrorCode code = MarshallerExceptionMapper.getErrorCode(m);
-                throw new ArgsException(code, argChar, null);
+                e.setErrorArgumentId(argumentFlag);
+                throw e;
             }
         }
-
-        try
-        {
-            m.set(argumentValue);
-        }
-        catch (ArgsException e)
-        {
-            e.setErrorArgumentId(argChar);
-            throw e;
-        }
-    }
-
-    public boolean has(char arg)
-    {
-        return argsFound.contains(arg);
-    }
-
-    public int nextArgument()
-    {
-        return currentArgument.nextIndex();
     }
 
     public boolean getBoolean(char arg)

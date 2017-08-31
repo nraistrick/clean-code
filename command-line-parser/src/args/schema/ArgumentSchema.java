@@ -2,25 +2,26 @@ package args.schema;
 
 import args.exceptions.ArgsException;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+
+import static args.exceptions.ArgsException.ErrorCode.INVALID_ARGUMENT_NAME;
 
 public class ArgumentSchema
 {
     public static final String delimiter = ",";
 
-    private List<SchemaElement> elements;
+    private Map<Character, SchemaElement> elements;
 
     public ArgumentSchema(String schema) throws ArgsException
     {
         this.elements = parse(schema);
     }
 
-    private static List<SchemaElement> parse(String schema) throws ArgsException
+    private static Map<Character, SchemaElement> parse(String schema) throws ArgsException
     {
-        List<SchemaElement> elements = new ArrayList<>();
+        Map<Character, SchemaElement> elements = new HashMap<>();
         for (String element : schema.split(ArgumentSchema.delimiter))
-            elements.add(parseElement(element));
+            elements.put(element.charAt(0), parseElement(element));
 
         return elements;
     }
@@ -31,8 +32,17 @@ public class ArgumentSchema
         return new SchemaElement(whitespaceTrimmedElement);
     }
 
-    public List<SchemaElement> getElements()
+    public SchemaElement getElement(char argumentCharacter) throws ArgsException
     {
-        return elements;
+        SchemaElement element = elements.get(argumentCharacter);
+        if (element == null)
+            throw new ArgsException(INVALID_ARGUMENT_NAME, argumentCharacter, null);
+
+        return element;
+    }
+
+    public Collection<SchemaElement> getElements()
+    {
+        return elements.values();
     }
 }
