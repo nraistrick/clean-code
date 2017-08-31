@@ -1,12 +1,14 @@
 package args.schema;
 
 import args.exceptions.ArgsException;
+
+import static args.exceptions.ArgsException.ErrorCode.INVALID_ARGUMENT_FORMAT;
 import static args.exceptions.ArgsException.ErrorCode.INVALID_ARGUMENT_NAME;
 
 public class SchemaElement
 {
     private char elementId;
-    private String elementTail;
+    private ArgumentType elementType;
 
     public SchemaElement(String element) throws ArgsException
     {
@@ -16,7 +18,7 @@ public class SchemaElement
     private SchemaElement(char elementId, String elementTail) throws ArgsException
     {
         this.setElementId(elementId);
-        this.setElementTail(elementTail);
+        this.setElementType(elementTail);
     }
 
     private void setElementId(char elementId) throws ArgsException
@@ -31,9 +33,16 @@ public class SchemaElement
             throw new ArgsException(INVALID_ARGUMENT_NAME, elementId, null);
     }
 
-    private void setElementTail(String elementTail)
+    private void setElementType(String elementTail) throws ArgsException
     {
-        this.elementTail = elementTail;
+        try
+        {
+            this.elementType = ArgumentType.get(elementTail);
+        }
+        catch (IllegalArgumentException e)
+        {
+            throw new ArgsException(INVALID_ARGUMENT_FORMAT);
+        }
     }
 
     public char getElementId()
@@ -41,8 +50,8 @@ public class SchemaElement
         return elementId;
     }
 
-    public String getElementTail()
+    public ArgumentType getElementType()
     {
-        return elementTail;
+        return elementType;
     }
 }

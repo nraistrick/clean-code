@@ -1,21 +1,26 @@
 package args.marshallers;
 
+import args.schema.ArgumentType;
+
 public class MarshallerFactory
 {
-    public static ArgumentMarshaller GetMarshaller(String elementTail)
+    public static ArgumentMarshaller GetMarshaller(ArgumentType elementType)
     {
-        if (elementTail.length() == 0)
-            return new BooleanArgumentMarshaller();
-        else if (elementTail.equals("*"))
-            return new StringArgumentMarshaller();
-        else if (elementTail.equals("#"))
-            return new IntegerArgumentMarshaller();
-        else if (elementTail.equals("##"))
-            return new DoubleArgumentMarshaller();
-        else if (elementTail.equals("[*]"))
-            return new StringArrayArgumentMarshaller();
-        else
-            return null;
+        switch (elementType)
+        {
+            case BOOLEAN:
+                return new BooleanArgumentMarshaller();
+            case STRING:
+                return new StringArgumentMarshaller();
+            case INTEGER:
+                return new IntegerArgumentMarshaller();
+            case DOUBLE:
+                return new DoubleArgumentMarshaller();
+            case STRING_ARRAY:
+                return new StringArrayArgumentMarshaller();
+            default:
+                return null;
+        }
     }
 }
 

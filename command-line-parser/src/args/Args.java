@@ -27,10 +27,10 @@ public class Args
     {
         for (SchemaElement e : schema.getElements())
         {
-            ArgumentMarshaller marshaller = MarshallerFactory.GetMarshaller(e.getElementTail());
+            ArgumentMarshaller marshaller = MarshallerFactory.GetMarshaller(e.getElementType());
             if(marshaller == null)
             {
-                throw new ArgsException(INVALID_ARGUMENT_FORMAT, e.getElementId(), e.getElementTail());
+                throw new ArgsException(INVALID_ARGUMENT_FORMAT, e.getElementId(), e.getElementType().toString());
             }
             marshallers.put(e.getElementId(), marshaller);
         }
