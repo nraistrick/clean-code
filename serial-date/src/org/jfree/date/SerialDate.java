@@ -256,11 +256,11 @@ public abstract class SerialDate implements Comparable,
         int result = -1;
         s = s.trim();
         for (int i = 0; i < weekDayNames.length; i++) {
-            if (s.equals(shortWeekdayNames[i])) {
+            if (s.equalsIgnoreCase(shortWeekdayNames[i])) {
                 result = i;
                 break;
             }
-            if (s.equals(weekDayNames[i])) {
+            if (s.equalsIgnoreCase(weekDayNames[i])) {
                 result = i;
                 break;
             }
@@ -351,6 +351,7 @@ public abstract class SerialDate implements Comparable,
      * @param code  the month code (1-12).
      *
      * @return the quarter that the month belongs to.
+     * @throws java.lang.IllegalArgumentException
      */
     public static int monthCodeToQuarter(final int code) {
 
@@ -453,12 +454,13 @@ public abstract class SerialDate implements Comparable,
 
         // now search through the month names...
         if ((result < 1) || (result > 12)) {
+            result = -1;
             for (int i = 0; i < monthNames.length; i++) {
-                if (s.equals(shortMonthNames[i])) {
+                if (s.equalsIgnoreCase(shortMonthNames[i])) {
                     result = i + 1;
                     break;
                 }
-                if (s.equals(monthNames[i])) {
+                if (s.equalsIgnoreCase(monthNames[i])) {
                     result = i + 1;
                     break;
                 }
@@ -633,7 +635,7 @@ public abstract class SerialDate implements Comparable,
      * @return the latest date that falls on the specified day-of-the-week and 
      *         is BEFORE the base date.
      */
-    public static SerialDate getPreviousDayOfWeek(final int targetWeekday, 
+    public static SerialDate getPreviousDayOfWeek(final int targetWeekday,
                                                   final SerialDate base) {
 
         // check arguments...
@@ -680,7 +682,7 @@ public abstract class SerialDate implements Comparable,
         // find the date...
         final int adjust;
         final int baseDOW = base.getDayOfWeek();
-        if (baseDOW > targetWeekday) {
+        if (baseDOW >= targetWeekday) {
             adjust = 7 + Math.min(0, targetWeekday - baseDOW);
         }
         else {
@@ -711,14 +713,12 @@ public abstract class SerialDate implements Comparable,
         }
 
         // find the date...
-        final int baseDOW = base.getDayOfWeek();
-        int adjust = -Math.abs(targetDOW - baseDOW);
-        if (adjust >= 4) {
-            adjust = 7 - adjust;
-        }
-        if (adjust <= -4) {
-            adjust = 7 + adjust;
-        }
+        int delta = targetDOW - base.getDayOfWeek();
+        int positiveDelta = delta + 7;
+        int adjust = positiveDelta % 7;
+        if (adjust > 3)
+            adjust -= 7;
+
         return SerialDate.addDays(adjust, base);
 
     }
@@ -755,7 +755,7 @@ public abstract class SerialDate implements Comparable,
             case SerialDate.FOURTH_WEEK_IN_MONTH : return "Fourth";
             case SerialDate.LAST_WEEK_IN_MONTH : return "Last";
             default :
-                return "SerialDate.weekInMonthToString(): invalid code.";
+                throw new IllegalArgumentException("Invalid week in month code");
         }
 
     }
@@ -775,9 +775,9 @@ public abstract class SerialDate implements Comparable,
             case SerialDate.PRECEDING : return "Preceding";
             case SerialDate.NEAREST : return "Nearest";
             case SerialDate.FOLLOWING : return "Following";
-            default : return "ERROR : Relative To String";
+            default :
+                throw new IllegalArgumentException("ERROR : Relative To String");
         }
-
     }
 
     /**
@@ -842,11 +842,9 @@ public abstract class SerialDate implements Comparable,
     public abstract java.util.Date toDate();
 
     /**
-     * Returns the description that is attached to the date.  It is not 
-     * required that a date have a description, but for some applications it 
-     * is useful.
+     * Returns the description of the date.
      *
-     * @return The description (possibly <code>null</code>).
+     * @return a description of the date
      */
     public String getDescription() {
         return this.description;
@@ -855,8 +853,7 @@ public abstract class SerialDate implements Comparable,
     /**
      * Sets the description for the date.
      *
-     * @param description  the description for this date (<code>null</code> 
-     *                     permitted).
+     * @param description the new description for the date.
      */
     public void setDescription(final String description) {
         this.description = description;
